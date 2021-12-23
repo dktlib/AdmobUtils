@@ -28,6 +28,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onAdFail() {
                onAdClosed();
             }
+
         },false);
     }
 }

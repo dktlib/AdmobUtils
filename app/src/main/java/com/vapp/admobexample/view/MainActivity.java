@@ -13,7 +13,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.vapp.admobexample.utilsdemp.UtilsDemoActivity;
+import com.vapp.admoblibrary.ads.AdLoadCallback;
 import com.vapp.admoblibrary.ads.NativeAdCallback;
 import com.vapp.admoblibrary.ads.admobnative.enumclass.GoogleEBanner;
 import com.vapp.admoblibrary.ads.admobnative.enumclass.GoogleENative;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn_IAP, btn_Rate, btn_Utils;
     LinearLayout nativeAds;
     FrameLayout banner;
+    public InterstitialAd kI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
         finbyid();
         showDialogRate();
-
-        // AdsConfigModel = Model call by API
-//         Utils.getInstance().adUnitLists = adsConfigModel.getAdUnitList();
-
-        //API data sample
         AdUnitListModel adUnitList = Utils.getInstance().getAdUnitByName("Name AdUnit", "Defaul Id Admob");
-        //check Countries (BOOL)
-
-//        if (Utils.getInstance().showAdForCountry(this,adUnitList)){
-//            //show ads
-//        }else{
-//            //dont show ads
-//        }
-
         btn_Utils.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,28 +61,72 @@ public class MainActivity extends AppCompatActivity {
         btn_LoadInter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AdmodUtils.getInstance().loadAdInterstitial(MainActivity.this, getString(R.string.test_ads_admob_inter_id), false);
+                AdmodUtils.getInstance().loadAdInterstitial(MainActivity.this, getString(R.string.test_ads_admob_inter_id), new AdLoadCallback() {
+                    @Override
+                    public void onAdLoaded() {
+                        kI = AdmodUtils.getInstance().mInterstitialAd;
+                    }
+
+                    @Override
+                    public void onAdFail() {
+
+                    }
+                });
 
             }
         });
         btn_ShowInter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AdmodUtils.getInstance().showAdInterstitialWithCallback(MainActivity.this, new AdCallback() {
-                    @Override
-                    public void onAdClosed() {
-                        //code here
-//                        Utils.getInstance().replaceActivity(MainActivity.this,OtherActivity.class);
-                        Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
-                    }
+                if(kI != null) {
+                    AdmodUtils.getInstance().showAdInterstitialWithCallback(kI, MainActivity.this, new AdCallback() {
+                        @Override
+                        public void onAdClosed() {
+                            AdmodUtils.getInstance().loadAdInterstitial(MainActivity.this, getString(R.string.test_ads_admob_inter_id), new AdLoadCallback() {
+                                @Override
+                                public void onAdFail() {
 
-                    @Override
-                    public void onAdFail() {
-                        //code here
-//                        Utils.getInstance().replaceActivity(MainActivity.this,OtherActivity.class);
-                        Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
-                    }
-                }, 0);
+                                }
+
+                                @Override
+                                public void onAdLoaded() {
+                                    kI = AdmodUtils.getInstance().mInterstitialAd;
+                                }
+                            });
+                            Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
+                        }
+
+                        @Override
+                        public void onAdFail() {
+                            Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
+                        }
+                    });
+                }
+                else{
+                    Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
+                    AdmodUtils.getInstance().showAdInterstitialWithCallback(kI, MainActivity.this, new AdCallback() {
+                        @Override
+                        public void onAdClosed() {
+                            AdmodUtils.getInstance().loadAdInterstitial(MainActivity.this, getString(R.string.test_ads_admob_inter_id), new AdLoadCallback() {
+                                @Override
+                                public void onAdFail() {
+
+                                }
+
+                                @Override
+                                public void onAdLoaded() {
+                                    kI = AdmodUtils.getInstance().mInterstitialAd;
+                                }
+                            });
+                            Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
+                        }
+
+                        @Override
+                        public void onAdFail() {
+                            Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
+                        }
+                    });
+                }
             }
         });
         btn_LoadAndShowInter.setOnClickListener(new View.OnClickListener() {
@@ -180,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        //AdmodUtils.getInstance().loadAdBanner(MainActivity.this, getString(R.string.test_ads_admob_banner_id), banner);
+        AdmodUtils.getInstance().loadAdBanner(MainActivity.this, getString(R.string.test_ads_admob_banner_id), banner);
     }
 
     private void showDialogRate() {
