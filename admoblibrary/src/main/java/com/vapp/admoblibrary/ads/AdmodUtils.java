@@ -557,7 +557,6 @@ public class AdmodUtils {
                         @Override
                         public void onAdDismissedFullScreenContent() {
                             adCallback.onAdClosed();
-                            mInterstitialAd = null;
                             isAdShowing = false;
                             Log.d("TAG", "The ad was dismissed.");
                         }
@@ -565,7 +564,6 @@ public class AdmodUtils {
                         @Override
                         public void onAdFailedToShowFullScreenContent(AdError adError) {
                             adCallback.onAdFail();
-                            mInterstitialAd = null;
                             isAdShowing = false;
                             Log.d("TAG", "The ad failed to show.");
                         }
