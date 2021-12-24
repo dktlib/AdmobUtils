@@ -565,6 +565,18 @@ public class AdmodUtils {
                         public void onAdFailedToShowFullScreenContent(AdError adError) {
                             adCallback.onAdFail();
                             isAdShowing = false;
+                            mInterstitialAd = null;
+                            loadAdInterstitial(activity, admobId, new AdLoadCallback() {
+                                @Override
+                                public void onAdFail() {
+                                    Log.d("TAG", "Ad loaded again fails");
+                                }
+
+                                @Override
+                                public void onAdLoaded() {
+                                    Log.d("TAG", "Ad loaded again success");
+                                }
+                            });
                             Log.d("TAG", "The ad failed to show.");
                         }
 
