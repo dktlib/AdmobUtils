@@ -496,7 +496,7 @@ public class AdmodUtils {
 
 
 
-    public void loadAdInterstitial(Activity activity, String admobId, AdLoadCallback adLoadCallback) {
+    public void loadAdInterstitial(Context activity, String admobId, AdLoadCallback adLoadCallback) {
         if(!isShowAds){
             return;
         }
