@@ -545,7 +545,7 @@ public class AdmodUtils {
 
 
 
-    public void showAdInterstitialWithCallback(InterstitialAd kInterstitialAd,Activity activity,AdCallback adCallback) {
+    public void showAdInterstitialWithCallback(InterstitialAd kInterstitialAd,String admobId,Activity activity,AdCallback adCallback) {
         if (!isShowAds) {
             adCallback.onAdClosed();
             return;
@@ -575,6 +575,17 @@ public class AdmodUtils {
                             mInterstitialAd = null;
                             isAdShowing = true;
                             Log.d("TAG", "The ad was shown.");
+                            loadAdInterstitial(activity, admobId, new AdLoadCallback() {
+                                @Override
+                                public void onAdFail() {
+                                    Log.d("TAG", "Ad loaded again fails");
+                                }
+
+                                @Override
+                                public void onAdLoaded() {
+                                    Log.d("TAG", "Ad loaded again success");
+                                }
+                            });
                         }
                     });
         } else {

@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
         btn_ShowInter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(kI != null) {
-                    AdmodUtils.getInstance().showAdInterstitialWithCallback(kI, MainActivity.this, new AdCallback() {
+                if(AdmodUtils.getInstance().mInterstitialAd != null) {
+                    AdmodUtils.getInstance().showAdInterstitialWithCallback(AdmodUtils.getInstance().mInterstitialAd,getString(R.string.test_ads_admob_inter_id), MainActivity.this, new AdCallback() {
                         @Override
                         public void onAdClosed() {
                             AdmodUtils.getInstance().loadAdInterstitial(MainActivity.this, getString(R.string.test_ads_admob_inter_id), new AdLoadCallback() {
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onAdLoaded() {
-                                    kI = AdmodUtils.getInstance().mInterstitialAd;
+
                                 }
                             });
                             Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
                     Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
-                    AdmodUtils.getInstance().showAdInterstitialWithCallback(kI, MainActivity.this, new AdCallback() {
+                    AdmodUtils.getInstance().showAdInterstitialWithCallback(AdmodUtils.getInstance().mInterstitialAd, getString(R.string.test_ads_admob_inter_id),MainActivity.this, new AdCallback() {
                         @Override
                         public void onAdClosed() {
                             AdmodUtils.getInstance().loadAdInterstitial(MainActivity.this, getString(R.string.test_ads_admob_inter_id), new AdLoadCallback() {
