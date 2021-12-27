@@ -621,6 +621,14 @@ public class AdmodUtils {
         }
     }
 
+    public void showProgressDialog(Activity activity, String title) {
+        dialog = new SweetAlertDialog(activity, SweetAlertDialog.PROGRESS_TYPE);
+        dialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+        dialog.setTitleText(title);
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
 
 
     public void loadAndShowAdInterstitialWithCallback(AppCompatActivity activity, String admobId, int limitTime, AdCallback adCallback, boolean enableLoadingDialog) {
