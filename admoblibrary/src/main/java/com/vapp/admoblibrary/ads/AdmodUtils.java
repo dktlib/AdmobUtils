@@ -85,6 +85,8 @@ public class AdmodUtils {
     private static volatile AdmodUtils INSTANCE;
     //Reward Ads
     public RewardedAd mRewardedAd = null;
+
+    public  boolean tryLoad = false;
     public static synchronized AdmodUtils getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new AdmodUtils();
@@ -519,26 +521,35 @@ public class AdmodUtils {
             }
         }
 
+        String finalAdmobId = admobId;
         InterstitialAd.load(activity, admobId, adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull @org.jetbrains.annotations.NotNull InterstitialAd interstitialAd) {
                 mInterstitialAd = interstitialAd;
                 adLoadCallback.onAdLoaded();
                 Log.i("adLog", "onAdLoaded");
-                Toast.makeText(activity, "success load ads", Toast.LENGTH_SHORT).show();
+                tryLoad = true;
+                //Toast.makeText(activity, "success load ads", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAdFailedToLoad(@NonNull @org.jetbrains.annotations.NotNull LoadAdError loadAdError) {
-                // Handle the error
-                Log.i("adLog", loadAdError.getMessage());
-                String error = String.format(
-                                "domain: %s, code: %d, message: %s",
-                                loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
-                Toast.makeText(
-                        activity, "onAdFailedToLoad() with error: " + error, Toast.LENGTH_SHORT)
-                        .show();
-                adLoadCallback.onAdFail();
+                // Handle the error, try again 1
+                if(tryLoad == false){
+                    // try load 1
+                    tryLoad = true;
+                    loadAdInterstitial(activity, finalAdmobId, adLoadCallback);
+                }
+                else {
+                    Log.i("adLog", loadAdError.getMessage());
+                    String error = String.format(
+                            "domain: %s, code: %d, message: %s",
+                            loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
+//                Toast.makeText(
+//                        activity, "onAdFailedToLoad() with error: " + error, Toast.LENGTH_SHORT)
+//                        .show();
+                    adLoadCallback.onAdFail();
+                }
             }
         });
     }
