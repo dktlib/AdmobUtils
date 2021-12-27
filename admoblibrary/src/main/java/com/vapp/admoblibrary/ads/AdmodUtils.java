@@ -593,6 +593,7 @@ public class AdmodUtils {
 
                         @Override
                         public void onAdShowedFullScreenContent() {
+                            adCallback.onAdShowed();
                             mInterstitialAd = null;
                             isAdShowing = true;
                             Log.d("TAG", "The ad was shown.");

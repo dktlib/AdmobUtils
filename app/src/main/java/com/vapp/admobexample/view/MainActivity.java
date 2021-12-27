@@ -100,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
                         public void onAdFail() {
                             Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
                         }
+
+                        @Override
+                        public void onAdShowed() {
+
+                        }
                     });
                 }
                 else{
@@ -117,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
                                 public void onAdLoaded() {
                                     kI = AdmodUtils.getInstance().mInterstitialAd;
                                 }
+
+
+
                             });
                             Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
                         }
@@ -124,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onAdFail() {
                             Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
+                        }
+
+                        @Override
+                        public void onAdShowed() {
+
                         }
                     });
                 }
@@ -140,6 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onAdFail() {onAdClosed();}
+
+                    @Override
+                    public void onAdShowed() {
+
+                    }
                 }, true);
             }
         });
