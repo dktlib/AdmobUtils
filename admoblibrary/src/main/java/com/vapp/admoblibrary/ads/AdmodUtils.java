@@ -561,13 +561,19 @@ public class AdmodUtils {
             adCallback.onAdClosed();
             return;
         }
+        if (kInterstitialAd == null) {
+            if (adCallback != null) {
+                adCallback.onAdClosed();
+            }
+            return;
+        }
         if (kInterstitialAd != null) {
-            kInterstitialAd.show(activity);
+
             kInterstitialAd.setFullScreenContentCallback(
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
-                            adCallback.onAdClosed();
+//                            adCallback.onAdClosed();
                             isAdShowing = false;
                             Log.d("TAG", "The ad was dismissed.");
                         }
@@ -610,8 +616,41 @@ public class AdmodUtils {
                             });
                         }
                     });
+            showInterstitialAd(activity,kInterstitialAd,adCallback);
         } else {
-            Toast.makeText(activity, "Ad did not load", Toast.LENGTH_SHORT).show();
+            if(adCallback != null){
+                adCallback.onAdClosed();
+            }
+            //Toast.makeText(activity, "Ad did not load", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void showInterstitialAd(Context context, InterstitialAd mInterstitialAd, AdCallback callback) {
+        if (mInterstitialAd != null) {
+            if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                new Handler().postDelayed(() -> {
+                    if (callback != null) {
+                        callback.onAdClosed();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dialog != null && dialog.isShowing() && !((Activity) context).isDestroyed())
+                                    dialog.dismiss();
+                            }
+                        }, 1500);
+                    }
+
+                    mInterstitialAd.show((Activity) context);
+
+                }, 800);
+
+            }
+        } else if (callback != null) {
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+            callback.onAdClosed();
         }
     }
 
