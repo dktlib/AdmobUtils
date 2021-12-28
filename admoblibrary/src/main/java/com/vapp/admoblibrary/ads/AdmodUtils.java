@@ -629,21 +629,11 @@ public class AdmodUtils {
     private void showInterstitialAd(Context context, InterstitialAd mInterstitialAd, AdCallback callback) {
         if (mInterstitialAd != null) {
             if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
-                new Handler().postDelayed(() -> {
-                    if (callback != null) {
-                        callback.onAdClosed();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (dialog != null && dialog.isShowing() && !((Activity) context).isDestroyed())
-                                    dialog.dismiss();
-                            }
-                        }, 1500);
-                    }
+                if (callback != null) {
+                    callback.onAdClosed();
 
-                    mInterstitialAd.show((Activity) context);
-
-                }, 800);
+                }
+                mInterstitialAd.show((Activity) context);
 
             }
         } else if (callback != null) {
