@@ -626,6 +626,79 @@ public class AdmodUtils {
     }
 
 
+
+    public void showAdInterstitialSplashWithCallback(InterstitialAd kInterstitialAd,String admobId,Activity activity,AdCallback adCallback) {
+        if (!isShowAds) {
+            adCallback.onAdClosed();
+            return;
+        }
+        if (kInterstitialAd == null) {
+            if (adCallback != null) {
+                adCallback.onAdClosed();
+            }
+            return;
+        }
+        if (kInterstitialAd != null) {
+
+            kInterstitialAd.setFullScreenContentCallback(
+                    new FullScreenContentCallback() {
+                        @Override
+                        public void onAdDismissedFullScreenContent() {
+//                            adCallback.onAdClosed();
+                            isAdShowing = false;
+                            Log.d("TAG", "The ad was dismissed.");
+                        }
+
+                        @Override
+                        public void onAdFailedToShowFullScreenContent(AdError adError) {
+                            adCallback.onAdFail();
+                            isAdShowing = false;
+                            mInterstitialAd = null;
+                            loadAdInterstitial(activity, admobId, new AdLoadCallback() {
+                                @Override
+                                public void onAdFail() {
+                                    Log.d("TAG", "Ad loaded again fails");
+                                }
+
+                                @Override
+                                public void onAdLoaded() {
+                                    Log.d("TAG", "Ad loaded again success");
+                                }
+                            });
+                            Log.d("TAG", "The ad failed to show.");
+                        }
+
+                        @Override
+                        public void onAdShowedFullScreenContent() {
+                            adCallback.onAdShowed();
+                            mInterstitialAd = null;
+                            isAdShowing = true;
+                            Log.d("TAG", "The ad was shown.");
+                            loadAdInterstitial(activity, admobId, new AdLoadCallback() {
+                                @Override
+                                public void onAdFail() {
+                                    Log.d("TAG", "Ad loaded again fails");
+                                }
+
+                                @Override
+                                public void onAdLoaded() {
+                                    Log.d("TAG", "Ad loaded again success");
+                                }
+                            });
+                        }
+                    });
+            showInterstitialSplashAd(activity,kInterstitialAd,adCallback);
+        } else {
+            if(adCallback != null){
+                adCallback.onAdClosed();
+            }
+            //Toast.makeText(activity, "Ad did not load", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
     private void showInterstitialAd(Context context, InterstitialAd mInterstitialAd, AdCallback callback) {
         if (mInterstitialAd != null) {
             if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
@@ -636,6 +709,25 @@ public class AdmodUtils {
                 mInterstitialAd.show((Activity) context);
 
             }
+        } else if (callback != null) {
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+            callback.onAdClosed();
+        }
+    }
+
+
+    private void showInterstitialSplashAd(Context context, InterstitialAd mInterstitialAd, AdCallback callback) {
+        if (mInterstitialAd != null) {
+            //if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                if (callback != null) {
+                    callback.onAdClosed();
+
+                }
+                mInterstitialAd.show((Activity) context);
+
+            //}
         } else if (callback != null) {
             if (dialog != null) {
                 dialog.dismiss();
