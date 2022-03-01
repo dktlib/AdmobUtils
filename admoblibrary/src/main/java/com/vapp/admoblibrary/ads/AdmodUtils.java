@@ -2,7 +2,6 @@ package com.vapp.admoblibrary.ads;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -14,18 +13,15 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.vapp.admoblibrary.BuildConfig;
-import com.vapp.admoblibrary.ads.admobnative.enumclass.GoogleEBanner;
 import com.vapp.admoblibrary.ads.admobnative.enumclass.GoogleENative;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
@@ -48,7 +44,6 @@ import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.vapp.admoblibrary.R;
 import com.vapp.admoblibrary.ads.admobnative.NativeFunc;
-import com.vapp.admoblibrary.ads.model.AdUnitListModel;
 import com.vapp.admoblibrary.utils.DialogCallback;
 import com.vapp.admoblibrary.utils.DialogType;
 import com.vapp.admoblibrary.utils.SweetAlert.SweetAlertDialog;
@@ -59,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -227,7 +221,7 @@ public class AdmodUtils {
             }
 
             @Override
-            public void onAdFailedToLoad(LoadAdError adError) {
+            public void onAdFailedToLoad(@NonNull LoadAdError adError) {
                 Log.e(" Admod", "failloadbanner" + adError.getMessage());
                 shimmerFrameLayout.stopShimmerAnimation();
                 viewGroup.removeView(tagView);
@@ -282,22 +276,17 @@ public class AdmodUtils {
         }
 
         adLoader = new AdLoader.Builder(activity, s)
-                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                .forNativeAd(nativeAd -> {
+                    adCallback.onNativeAdLoaded();
 
-                    @Override
-                    public void onNativeAdLoaded(@NonNull @NotNull NativeAd nativeAd) {
-                        adCallback.onNativeAdLoaded();
+                    NativeAdView adView = (NativeAdView) activity.getLayoutInflater()
+                            .inflate(layout, null);
 
-                        NativeAdView adView = (NativeAdView) activity.getLayoutInflater()
-                                .inflate(layout, null);
+                    NativeFunc.Companion.populateNativeAdView(nativeAd, adView, GoogleENative.UNIFIED_MEDIUM);
 
-                        NativeFunc.Companion.populateNativeAdView(nativeAd, adView, GoogleENative.UNIFIED_MEDIUM);
-
-                        viewGroup.removeAllViews();
-                        viewGroup.addView(adView);
-                        viewGroup.setVisibility(View.VISIBLE);
-                    }
-
+                    viewGroup.removeAllViews();
+                    viewGroup.addView(adView);
+                    viewGroup.setVisibility(View.VISIBLE);
                 })
                 .withAdListener(new AdListener() {
                     @Override
@@ -573,7 +562,7 @@ public class AdmodUtils {
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
-//                            adCallback.onAdClosed();
+                            adCallback.onAdDismisFullScreen();
                             isAdShowing = false;
                             Log.d("TAG", "The ad was dismissed.");
                         }
@@ -723,10 +712,8 @@ public class AdmodUtils {
             //if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
                 if (callback != null) {
                     callback.onAdClosed();
-
                 }
                 mInterstitialAd.show((Activity) context);
-
             //}
         } else if (callback != null) {
             if (dialog != null) {

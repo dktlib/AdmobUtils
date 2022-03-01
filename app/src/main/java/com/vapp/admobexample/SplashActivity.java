@@ -23,6 +23,9 @@ public class SplashActivity extends AppCompatActivity {
             public void onAdClosed() {
                 Utils.getInstance().replaceActivity(SplashActivity.this, MainActivity.class);
             }
+            public void onAdDismisFullScreen(){
+
+            }
 
             @Override
             public void onAdFail() {

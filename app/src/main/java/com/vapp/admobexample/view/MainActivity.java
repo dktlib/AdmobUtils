@@ -87,6 +87,11 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         @Override
+                        public void onAdDismisFullScreen() {
+
+                        }
+
+                        @Override
                         public void onAdFail() {
                             //Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
                             onAdClosed();
@@ -109,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 }
 
+
                                 @Override
                                 public void onAdLoaded() {
                                     kI = AdmodUtils.getInstance().mInterstitialAd;
@@ -118,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
 
                             });
                             Utils.getInstance().addActivity(MainActivity.this, OtherActivity.class);
+                        }
+
+                        @Override
+                        public void onAdDismisFullScreen() {
+
                         }
 
                         @Override
@@ -147,6 +158,11 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onAdShowed() {
+
+                    }
+
+                    @Override
+                    public void onAdDismisFullScreen() {
 
                     }
                 }, true);

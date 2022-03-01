@@ -4,4 +4,5 @@ public interface AdCallback {
     void onAdClosed();
     void onAdFail();
     void onAdShowed();
+    void onAdDismisFullScreen();
 }
